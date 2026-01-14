@@ -1,0 +1,61 @@
+import logging
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+from telegram.ext import Application, CommandHandler, ContextTypes
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Команда /start - открывает Mini App"""
+    
+    # ВАЖНО: Замените на URL, где будет размещено ваше Mini App
+    # Например, GitHub Pages, Netlify, Vercel и т.д.
+    web_app_url = "https://your-domain.github.io/tasks-app"
+    
+    keyboard = [
+        [InlineKeyboardButton(
+            text="🗓 Открыть дневник задач",
+            web_app=WebAppInfo(url=web_app_url)
+        )]
+    ]
+    
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    await update.message.reply_text(
+        "👋 Добро пожаловать в дневник задач!\n\n"
+        "Нажмите кнопку ниже, чтобы открыть приложение:",
+        reply_markup=reply_markup
+    )
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Команда /help"""
+    await update.message.reply_text(
+        "📱 *Дневник задач - Mini App*\n\n"
+        "Это приложение работает прямо в Telegram!\n\n"
+        "*Возможности:*\n"
+        "• Добавление задач\n"
+        "• Отметка выполненных\n"
+        "• Статистика\n"
+        "• Фильтры задач\n\n"
+        "Нажмите /start чтобы открыть приложение",
+        parse_mode='Markdown'
+    )
+
+def main():
+    """Запуск бота"""
+    # ВАЖНО: Замените на токен вашего бота от @BotFather
+    TOKEN = 'YOUR_BOT_TOKEN'
+    
+    application = Application.builder().token(TOKEN).build()
+    
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
+    
+    print("🤖 Бот запущен...")
+    print("📱 Mini App готов к работе!")
+    application.run_polling()
+
+if __name__ == '__main__':
+    main()
