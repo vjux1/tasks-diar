@@ -1,61 +1,475 @@
-import logging
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-from telegram.ext import Application, CommandHandler, ContextTypes
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дневник задач</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 16px;
+            padding-bottom: 80px;
+        }
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Команда /start - открывает Mini App"""
-    
-    # ВАЖНО: Замените на URL, где будет размещено ваше Mini App
-    # Например, GitHub Pages, Netlify, Vercel и т.д.
-    web_app_url = "https://your-domain.github.io/tasks-app"
-    
-    keyboard = [
-        [InlineKeyboardButton(
-            text="🗓 Открыть дневник задач",
-            web_app=WebAppInfo(url=web_app_url)
-        )]
-    ]
-    
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await update.message.reply_text(
-        "👋 Добро пожаловать в дневник задач!\n\n"
-        "Нажмите кнопку ниже, чтобы открыть приложение:",
-        reply_markup=reply_markup
-    )
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+        }
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Команда /help"""
-    await update.message.reply_text(
-        "📱 *Дневник задач - Mini App*\n\n"
-        "Это приложение работает прямо в Telegram!\n\n"
-        "*Возможности:*\n"
-        "• Добавление задач\n"
-        "• Отметка выполненных\n"
-        "• Статистика\n"
-        "• Фильтры задач\n\n"
-        "Нажмите /start чтобы открыть приложение",
-        parse_mode='Markdown'
-    )
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
 
-def main():
-    """Запуск бота"""
-    # ВАЖНО: Замените на токен вашего бота от @BotFather
-    TOKEN = 'YOUR_BOT_TOKEN'
-    
-    application = Application.builder().token(TOKEN).build()
-    
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    
-    print("🤖 Бот запущен...")
-    print("📱 Mini App готов к работе!")
-    application.run_polling()
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
 
-if __name__ == '__main__':
-    main()
+        .stat-card {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tg-theme-button-color, #3390ec);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #999999);
+            margin-top: 4px;
+        }
+
+        .add-task-container {
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #3390ec);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--tg-theme-hint-color, #999999);
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-button-color, #3390ec);
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            border: 2px solid var(--tg-theme-button-color, #3390ec);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .task-checkbox.checked {
+            background: var(--tg-theme-button-color, #3390ec);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-text {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .task-text.completed {
+            text-decoration: line-through;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+
+        .task-time {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+
+        .task-delete {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .task-delete:active {
+            transform: scale(0.9);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗓 Дневник задач</h1>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="totalTasks">0</div>
+            <div class="stat-label">Всего</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="activeTasks">0</div>
+            <div class="stat-label">Активных</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="completedTasks">0</div>
+            <div class="stat-label">Выполнено</div>
+        </div>
+    </div>
+
+    <div class="add-task-container">
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Добавить новую задачу...">
+            <button class="btn btn-primary" onclick="addTask()">➕</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('active')">Активные</button>
+        <button class="tab" onclick="switchTab('completed')">Выполненные</button>
+        <button class="tab" onclick="switchTab('all')">Все</button>
+    </div>
+
+    <div class="tasks-list" id="tasksList"></div>
+
+    <script>
+        let tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            tg.MainButton.hide();
+        }
+
+        let tasks = [];
+        let currentTab = 'active';
+
+        // Проверка доступности Telegram Storage
+        const hasStorageAPI = window.storage && typeof window.storage.get === 'function';
+
+        // Загрузка задач из хранилища
+        async function loadTasks() {
+            try {
+                if (hasStorageAPI) {
+                    // Используем Telegram Storage
+                    const result = await window.storage.get('tasks');
+                    if (result && result.value) {
+                        tasks = JSON.parse(result.value);
+                    }
+                } else {
+                    // Fallback на localStorage
+                    const data = localStorage.getItem('tasks');
+                    if (data) {
+                        tasks = JSON.parse(data);
+                    }
+                }
+                renderTasks();
+                updateStats();
+            } catch (error) {
+                console.log('Первый запуск, задач пока нет');
+                tasks = [];
+                renderTasks();
+                updateStats();
+            }
+        }
+
+        // Сохранение задач в хранилище
+        async function saveTasks() {
+            try {
+                if (hasStorageAPI) {
+                    // Используем Telegram Storage
+                    await window.storage.set('tasks', JSON.stringify(tasks));
+                } else {
+                    // Fallback на localStorage
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+                }
+            } catch (error) {
+                console.error('Ошибка сохранения:', error);
+                if (tg && tg.showAlert) {
+                    tg.showAlert('Ошибка при сохранении задачи');
+                } else {
+                    alert('Ошибка при сохранении задачи');
+                }
+            }
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+
+            if (!text) {
+                if (tg && tg.showAlert) {
+                    tg.showAlert('Введите текст задачи');
+                } else {
+                    alert('Введите текст задачи');
+                }
+                return;
+            }
+
+            const task = {
+                id: Date.now(),
+                text: text,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            tasks.unshift(task);
+            input.value = '';
+            
+            saveTasks();
+            renderTasks();
+            updateStats();
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                if (task.completed) {
+                    task.completedAt = new Date().toISOString();
+                } else {
+                    delete task.completedAt;
+                }
+                saveTasks();
+                renderTasks();
+                updateStats();
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
+                }
+            }
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            renderTasks();
+            updateStats();
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderTasks();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'только что';
+            if (minutes < 60) return `${minutes} мин назад`;
+            if (hours < 24) return `${hours} ч назад`;
+            if (days < 7) return `${days} дн назад`;
+            
+            return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+        }
+
+        function renderTasks() {
+            const container = document.getElementById('tasksList');
+            let filteredTasks = tasks;
+
+            if (currentTab === 'active') {
+                filteredTasks = tasks.filter(t => !t.completed);
+            } else if (currentTab === 'completed') {
+                filteredTasks = tasks.filter(t => t.completed);
+            }
+
+            if (filteredTasks.length === 0) {
+                const emptyMessages = {
+                    'active': { icon: '📭', text: 'Нет активных задач' },
+                    'completed': { icon: '✨', text: 'Нет выполненных задач' },
+                    'all': { icon: '🎯', text: 'Добавьте первую задачу!' }
+                };
+                const msg = emptyMessages[currentTab];
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">${msg.icon}</div>
+                        <div class="empty-state-text">${msg.text}</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredTasks.map(task => `
+                <div class="task-item">
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" 
+                         onclick="toggleTask(${task.id})"></div>
+                    <div class="task-content">
+                        <div class="task-text ${task.completed ? 'completed' : ''}">${task.text}</div>
+                        <div class="task-time">${formatDate(task.completed ? task.completedAt : task.createdAt)}</div>
+                    </div>
+                    <button class="task-delete" onclick="deleteTask(${task.id})">🗑</button>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const active = total - completed;
+
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('activeTasks').textContent = active;
+            document.getElementById('completedTasks').textContent = completed;
+        }
+
+        // Обработка Enter
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        // Загрузка при старте
+        loadTasks();
+    </script>
+</body>
+</html>
