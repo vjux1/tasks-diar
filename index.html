@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swiss Task Manager</title>
+    <title>Дневник задач</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -14,355 +14,203 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
+            background-image: url('https://evroflag24.ru/wp-content/uploads/2021/02/%D1%88%D0%B2%D0%B5%D0%B9%D1%86%D0%B0%D1%80%D0%B8%D1%8F.jpg.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             padding: 16px;
             padding-bottom: 80px;
-            color: white;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
         }
 
         .container {
-            max-width: 480px;
-            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .header-title {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 50%, #c44569 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .header-subtitle {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Главные вкладки */
-        .main-tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .main-tab {
-            flex: 1;
-            padding: 14px 8px;
-            border: none;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .main-tab.active {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Круговая диаграмма прогресса */
-        .progress-circle-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 28px;
-            padding: 30px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .progress-circle {
-            position: relative;
-            width: 200px;
-            height: 200px;
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-
-        .progress-ring-bg {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 14;
-        }
-
-        .progress-ring-fill {
-            fill: none;
-            stroke: url(#gradient);
-            stroke-width: 14;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.6));
-        }
-
-        .progress-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .progress-percent {
-            font-size: 48px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: block;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .progress-text {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Мини статистика */
-        .stats-mini {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            align-items: center;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .stat-mini {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-            padding: 20px 16px;
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            padding: 18px 12px;
             border-radius: 16px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        .stat-mini-number {
-            font-size: 32px;
+        .stat-number {
+            font-size: 36px;
             font-weight: 800;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: block;
+            color: #d52b1e;
             margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(213, 43, 30, 0.2);
         }
 
-        .stat-mini-label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
+        .stat-label {
+            font-size: 12px;
+            color: #333;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Категории задач */
-        .category-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-            overflow-x: auto;
-            padding: 4px 0;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .category-selector::-webkit-scrollbar {
-            display: none;
-        }
-
-        .category-btn {
-            padding: 12px 18px;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.7);
-            border-radius: 16px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .category-btn.selected {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-            transform: translateY(-2px);
-        }
-
-        /* Ввод задачи */
         .input-container {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
         .task-input {
             flex: 1;
-            padding: 16px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 14px;
             font-size: 15px;
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            font-weight: 500;
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .task-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .task-input:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+            color: #999;
         }
 
         .add-btn {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff3b30 0%, #d52b1e 100%);
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 28px;
+            border-radius: 14px;
+            font-size: 24px;
             font-weight: 300;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(213, 43, 30, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .add-btn:active {
             transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(213, 43, 30, 0.3);
         }
 
-        /* Фильтры */
         .filters {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 16px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             padding: 4px 0;
         }
 
-        .filters::-webkit-scrollbar {
-            display: none;
-        }
-
         .filter-btn {
-            padding: 10px 20px;
+            padding: 8px 18px;
             border: none;
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.6);
-            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.85);
+            color: #333;
+            border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             backdrop-filter: blur(10px);
         }
 
         .filter-btn.active {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            background: linear-gradient(135deg, #ff3b30 0%, #d52b1e 100%);
             color: white;
-            box-shadow: 0 6px 16px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 4px 12px rgba(213, 43, 30, 0.4);
+            transform: translateY(-1px);
         }
 
-        /* Список задач */
         .tasks-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .task-item {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            padding: 18px;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 16px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 12px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .task-item.completed {
-            opacity: 0.5;
-        }
-
-        .task-category-icon {
-            font-size: 24px;
-            flex-shrink: 0;
+            opacity: 0.65;
+            background: rgba(240, 240, 240, 0.9);
         }
 
         .checkbox {
-            width: 28px;
-            height: 28px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 26px;
+            height: 26px;
+            border: 2.5px solid #ccc;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .checkbox:hover {
+            border-color: #d52b1e;
         }
 
         .checkbox.checked {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(135deg, #ff3b30 0%, #d52b1e 100%);
+            border-color: #d52b1e;
+            box-shadow: 0 2px 8px rgba(213, 43, 30, 0.3);
         }
 
         .checkbox.checked::after {
@@ -379,402 +227,123 @@
         .task-text {
             font-size: 15px;
             line-height: 1.5;
-            color: white;
+            color: #1a1a1a;
             font-weight: 500;
         }
 
         .task-item.completed .task-text {
             text-decoration: line-through;
-            color: rgba(255, 255, 255, 0.4);
+            color: #999;
         }
 
         .delete-btn {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 59, 48, 0.15);
-            color: #ff6b6b;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 18px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
         }
 
         .delete-btn:active {
-            background: rgba(255, 59, 48, 0.25);
+            background: rgba(255, 59, 48, 0.2);
             transform: scale(0.95);
         }
 
-        /* Пустое состояние */
         .empty-state {
             text-align: center;
             padding: 60px 24px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            backdrop-filter: blur(10px);
         }
 
         .empty-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            opacity: 0.6;
+            font-size: 72px;
+            margin-bottom: 16px;
+            opacity: 0.8;
         }
 
         .empty-text {
             font-size: 16px;
-            color: rgba(255, 255, 255, 0.5);
-            font-weight: 600;
+            color: #666;
+            font-weight: 500;
         }
 
-        /* Account Section */
-        .account-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .account-item {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .account-icon {
-            font-size: 32px;
-        }
-
-        .account-info {
-            flex: 1;
-        }
-
-        .account-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 4px;
-        }
-
-        .account-email {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .account-delete {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 59, 48, 0.15);
-            color: #ff6b6b;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .account-delete:active {
-            transform: scale(0.95);
-        }
-
-        /* Profit Section */
-        .profit-goal {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            padding: 24px;
-            border-radius: 20px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .profit-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .profit-flag {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        .profit-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 6px;
-        }
-
-        .profit-subtitle {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .profit-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .profit-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .profit-input-label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .profit-input {
-            padding: 14px 16px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .profit-input:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
-        }
-
-        .profit-progress-bar {
-            width: 100%;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 12px;
-        }
-
-        .profit-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b 0%, #ee5a6f 50%, #c44569 100%);
-            transition: width 0.5s ease;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
-        }
-
-        .profit-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .profit-stat {
-            text-align: center;
-        }
-
-        .profit-stat-value {
-            font-size: 20px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .profit-stat-label {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        /* Убираем полосу прокрутки в фильтрах */
+        .filters::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-title">Swiss Manager</div>
-            <div class="header-subtitle">Продуктивность на высшем уровне</div>
+            <span style="font-size: 32px;">🇨🇭</span>
+            <h1>Дневник задач</h1>
         </div>
 
-        <!-- Главные вкладки -->
-        <div class="main-tabs">
-            <button class="main-tab active" data-tab="tasks">📋 Задачи</button>
-            <button class="main-tab" data-tab="account">🍪 Account</button>
-            <button class="main-tab" data-tab="profit">🇨🇭 Profit</button>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">Всего</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeCount">0</div>
+                <div class="stat-label">Активных</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completedCount">0</div>
+                <div class="stat-label">Выполнено</div>
+            </div>
         </div>
 
-        <!-- ВКЛАДКА: ЗАДАЧИ -->
-        <div class="tab-content active" id="tasks-tab">
-            <!-- Круговая диаграмма -->
-            <div class="progress-circle-wrapper">
-                <div class="progress-circle">
-                    <svg width="200" height="200">
-                        <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#ee5a6f;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <circle class="progress-ring-bg" cx="100" cy="100" r="85"/>
-                        <circle class="progress-ring-fill" id="progressRing" cx="100" cy="100" r="85"/>
-                    </svg>
-                    <div class="progress-center">
-                        <span class="progress-percent" id="progressPercent">0%</span>
-                        <span class="progress-text">Выполнено</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Мини статистика -->
-            <div class="stats-mini">
-                <div class="stat-mini">
-                    <span class="stat-mini-number" id="activeCount">0</span>
-                    <span class="stat-mini-label">Активных</span>
-                </div>
-                <div class="stat-mini">
-                    <span class="stat-mini-number" id="completedCount">0</span>
-                    <span class="stat-mini-label">Готово</span>
-                </div>
-            </div>
-
-            <!-- Выбор категории -->
-            <div class="category-selector">
-                <button class="category-btn selected" data-category="work">💼 Работа</button>
-                <button class="category-btn" data-category="home">🏠 Дом</button>
-                <button class="category-btn" data-category="sport">💪 Спорт</button>
-                <button class="category-btn" data-category="study">📚 Учеба</button>
-                <button class="category-btn" data-category="shop">🛒 Покупки</button>
-            </div>
-
-            <!-- Ввод задачи -->
-            <div class="input-container">
-                <input type="text" class="task-input" id="taskInput" placeholder="Новая задача...">
-                <button class="add-btn" id="addBtn">+</button>
-            </div>
-
-            <!-- Фильтры -->
-            <div class="filters">
-                <button class="filter-btn active" data-filter="all">📋 Все</button>
-                <button class="filter-btn" data-filter="active">⏳ Активные</button>
-                <button class="filter-btn" data-filter="completed">✅ Выполненные</button>
-            </div>
-
-            <!-- Список задач -->
-            <div class="tasks-list" id="tasksList"></div>
+        <div class="input-container">
+            <input type="text" class="task-input" id="taskInput" placeholder="Добавить новую задачу...">
+            <button class="add-btn" id="addBtn">+</button>
         </div>
 
-        <!-- ВКЛАДКА: ACCOUNT -->
-        <div class="tab-content" id="account-tab">
-            <div class="empty-state" style="margin-bottom: 24px;">
-                <div class="empty-icon">🍪</div>
-                <div class="empty-text">Управление аккаунтами</div>
-            </div>
-
-            <div class="input-container">
-                <input type="text" class="task-input" id="accountName" placeholder="Название аккаунта...">
-            </div>
-            <div class="input-container">
-                <input type="text" class="task-input" id="accountEmail" placeholder="Email или логин...">
-                <button class="add-btn" id="addAccountBtn">+</button>
-            </div>
-
-            <div class="account-list" id="accountList"></div>
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">📋 Все</button>
+            <button class="filter-btn" data-filter="active">⏳ Активные</button>
+            <button class="filter-btn" data-filter="completed">✅ Выполненные</button>
         </div>
 
-        <!-- ВКЛАДКА: PROFIT -->
-        <div class="tab-content" id="profit-tab">
-            <div class="profit-goal">
-                <div class="profit-header">
-                    <div class="profit-flag">🇨🇭</div>
-                    <div class="profit-title">Цель прибыли</div>
-                    <div class="profit-subtitle">Отслеживайте ваш прогресс</div>
-                </div>
-
-                <div class="profit-inputs">
-                    <div class="profit-input-group">
-                        <label class="profit-input-label">Цель</label>
-                        <input type="number" class="profit-input" id="profitGoal" placeholder="10000" value="0">
-                    </div>
-                    <div class="profit-input-group">
-                        <label class="profit-input-label">Текущая</label>
-                        <input type="number" class="profit-input" id="profitCurrent" placeholder="0" value="0">
-                    </div>
-                </div>
-
-                <div class="profit-progress-bar">
-                    <div class="profit-progress-fill" id="profitProgressFill" style="width: 0%"></div>
-                </div>
-
-                <div class="profit-stats">
-                    <div class="profit-stat">
-                        <span class="profit-stat-value" id="profitPercentValue">0%</span>
-                        <span class="profit-stat-label">Прогресс</span>
-                    </div>
-                    <div class="profit-stat">
-                        <span class="profit-stat-value" id="profitRemainingValue">0</span>
-                        <span class="profit-stat-label">Осталось</span>
-                    </div>
-                </div>
-            </div>
-
+        <div class="tasks-list" id="tasksList">
             <div class="empty-state">
-                <div class="empty-icon">💰</div>
-                <div class="empty-text">Установите цель и отслеживайте прогресс</div>
+                <div class="empty-icon">📝</div>
+                <div class="empty-text">Нет активных задач</div>
             </div>
         </div>
     </div>
 
     <script>
-        let tg = window.Telegram?.WebApp;
-        if (tg) tg.expand();
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-        // Данные
-        let tasks = JSON.parse(localStorage.getItem('swissTasks')) || [];
-        let accounts = JSON.parse(localStorage.getItem('swissAccounts')) || [];
-        let profitData = JSON.parse(localStorage.getItem('swissProfit')) || { goal: 0, current: 0 };
-        
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
         let currentFilter = 'all';
-        let selectedCategory = 'work';
 
-        const categories = {
-            work: '💼',
-            home: '🏠',
-            sport: '💪',
-            study: '📚',
-            shop: '🛒'
-        };
-
-        // Сохранение
-        function saveData() {
-            localStorage.setItem('swissTasks', JSON.stringify(tasks));
-            localStorage.setItem('swissAccounts', JSON.stringify(accounts));
-            localStorage.setItem('swissProfit', JSON.stringify(profitData));
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
         }
 
-        // === ЗАДАЧИ ===
-        function updateProgress() {
+        function updateStats() {
             const total = tasks.length;
             const completed = tasks.filter(t => t.completed).length;
-            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const active = total - completed;
 
-            document.getElementById('activeCount').textContent = total - completed;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('activeCount').textContent = active;
             document.getElementById('completedCount').textContent = completed;
-            document.getElementById('progressPercent').textContent = percent + '%';
-
-            const circle = document.getElementById('progressRing');
-            const radius = 85;
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (percent / 100) * circumference;
-            
-            circle.style.strokeDasharray = circumference;
-            circle.style.strokeDashoffset = offset;
         }
 
         function renderTasks() {
@@ -786,10 +355,16 @@
             });
 
             if (filteredTasks.length === 0) {
+                const emptyMessages = {
+                    all: { icon: '📝', text: 'Нет задач' },
+                    active: { icon: '✨', text: 'Все задачи выполнены!' },
+                    completed: { icon: '📭', text: 'Нет выполненных задач' }
+                };
+                const empty = emptyMessages[currentFilter];
                 tasksList.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">✨</div>
-                        <div class="empty-text">Нет задач</div>
+                        <div class="empty-icon">${empty.icon}</div>
+                        <div class="empty-text">${empty.text}</div>
                     </div>
                 `;
                 return;
@@ -797,7 +372,6 @@
 
             tasksList.innerHTML = filteredTasks.map(task => `
                 <div class="task-item ${task.completed ? 'completed' : ''}">
-                    <div class="task-category-icon">${categories[task.category]}</div>
                     <div class="checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
                     <div class="task-content">
                         <div class="task-text">${task.text}</div>
@@ -815,12 +389,11 @@
                 tasks.push({
                     id: Date.now(),
                     text: text,
-                    category: selectedCategory,
                     completed: false
                 });
                 input.value = '';
-                saveData();
-                updateProgress();
+                saveTasks();
+                updateStats();
                 renderTasks();
             }
         }
@@ -829,110 +402,24 @@
             const task = tasks.find(t => t.id === id);
             if (task) {
                 task.completed = !task.completed;
-                saveData();
-                updateProgress();
+                saveTasks();
+                updateStats();
                 renderTasks();
             }
         }
 
         function deleteTask(id) {
             tasks = tasks.filter(t => t.id !== id);
-            saveData();
-            updateProgress();
+            saveTasks();
+            updateStats();
             renderTasks();
         }
 
-        // === ACCOUNTS ===
-        function renderAccounts() {
-            const accountList = document.getElementById('accountList');
-            
-            if (accounts.length === 0) {
-                accountList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🍪</div>
-                        <div class="empty-text">Нет аккаунтов</div>
-                    </div>
-                `;
-                return;
-            }
-
-            accountList.innerHTML = accounts.map(acc => `
-                <div class="account-item">
-                    <div class="account-icon">🍪</div>
-                    <div class="account-info">
-                        <div class="account-name">${acc.name}</div>
-                        <div class="account-email">${acc.email}</div>
-                    </div>
-                    <button class="account-delete" onclick="deleteAccount(${acc.id})">🗑️</button>
-                </div>
-            `).join('');
-        }
-
-        function addAccount() {
-            const nameInput = document.getElementById('accountName');
-            const emailInput = document.getElementById('accountEmail');
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
-
-            if (name && email) {
-                accounts.push({
-                    id: Date.now(),
-                    name: name,
-                    email: email
-                });
-                nameInput.value = '';
-                emailInput.value = '';
-                saveData();
-                renderAccounts();
-            }
-        }
-
-        function deleteAccount(id) {
-            accounts = accounts.filter(a => a.id !== id);
-            saveData();
-            renderAccounts();
-        }
-
-        // === PROFIT ===
-        function updateProfit() {
-            const goal = parseFloat(document.getElementById('profitGoal').value) || 0;
-            const current = parseFloat(document.getElementById('profitCurrent').value) || 0;
-            
-            profitData.goal = goal;
-            profitData.current = current;
-            saveData();
-
-            const percent = goal > 0 ? Math.min(Math.round((current / goal) * 100), 100) : 0;
-            const remaining = Math.max(goal - current, 0);
-
-            document.getElementById('profitProgressFill').style.width = percent + '%';
-            document.getElementById('profitPercentValue').textContent = percent + '%';
-            document.getElementById('profitRemainingValue').textContent = remaining.toLocaleString();
-        }
-
-        // === ВКЛАДКИ ===
-        document.querySelectorAll('.main-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.dataset.tab;
-                
-                document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                tab.classList.add('active');
-                document.getElementById(tabName + '-tab').classList.add('active');
-            });
+        document.getElementById('addBtn').addEventListener('click', addTask);
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
         });
 
-        // === КАТЕГОРИИ ===
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                selectedCategory = btn.dataset.category;
-            });
-        });
-
-        // === ФИЛЬТРЫ ===
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -942,26 +429,8 @@
             });
         });
 
-        // === СОБЫТИЯ ===
-        document.getElementById('addBtn').addEventListener('click', addTask);
-        document.getElementById('taskInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTask();
-        });
-
-        document.getElementById('addAccountBtn').addEventListener('click', addAccount);
-        document.getElementById('accountEmail').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addAccount();
-        });
-
-        document.getElementById('profitGoal').addEventListener('input', updateProfit);
-        document.getElementById('profitCurrent').addEventListener('input', updateProfit);
-
-        // Загрузка сохраненных данных
-        document.getElementById('profitGoal').value = profitData.goal;
-        document.getElementById('profitCurrent').value = profitData.current;
-
-        // Инициализация
-        updateProgress();
+        updateStats();
         renderTasks();
-        renderAccounts();
-        updateProfit();
+    </script>
+</body>
+</html>
