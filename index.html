@@ -14,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Switzerland.svg/1200px-Flag_of_Switzerland.svg.png');
+            background-image: url('https://evroflag24.ru/wp-content/uploads/2021/02/%D1%88%D0%B2%D0%B5%D0%B9%D1%86%D0%B0%D1%80%D0%B8%D1%8F.jpg.webp');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -31,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             z-index: -1;
         }
 
@@ -41,12 +41,14 @@
             gap: 12px;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .header h1 {
             font-size: 24px;
             font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .stats {
@@ -57,22 +59,23 @@
         }
 
         .stat-card {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            background: rgba(255, 255, 255, 0.95);
             padding: 16px;
             border-radius: 12px;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .stat-number {
             font-size: 32px;
             font-weight: 700;
-            color: var(--tg-theme-button-color, #3390ec);
+            color: #d52b1e;
             margin-bottom: 4px;
         }
 
         .stat-label {
             font-size: 13px;
-            color: var(--tg-theme-hint-color, #999999);
+            color: #666;
         }
 
         .input-container {
@@ -84,22 +87,24 @@
         .task-input {
             flex: 1;
             padding: 12px 16px;
-            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+            border: none;
             border-radius: 12px;
             font-size: 15px;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .add-btn {
             padding: 12px 20px;
-            background: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            background: #d52b1e;
+            color: white;
             border: none;
             border-radius: 12px;
             font-size: 20px;
             cursor: pointer;
             transition: opacity 0.2s;
+            box-shadow: 0 2px 8px rgba(213, 43, 30, 0.3);
         }
 
         .add-btn:active {
@@ -116,20 +121,21 @@
 
         .filter-btn {
             padding: 8px 16px;
-            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
             border-radius: 20px;
             font-size: 14px;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .filter-btn.active {
-            background: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border-color: var(--tg-theme-button-color, #3390ec);
+            background: #d52b1e;
+            color: white;
+            border-color: #d52b1e;
         }
 
         .tasks-list {
@@ -139,13 +145,14 @@
         }
 
         .task-item {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            background: rgba(255, 255, 255, 0.95);
             padding: 16px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
             transition: opacity 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .task-item.completed {
@@ -155,7 +162,7 @@
         .checkbox {
             width: 24px;
             height: 24px;
-            border: 2px solid var(--tg-theme-hint-color, #999999);
+            border: 2px solid #999;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -166,8 +173,8 @@
         }
 
         .checkbox.checked {
-            background: var(--tg-theme-button-color, #3390ec);
-            border-color: var(--tg-theme-button-color, #3390ec);
+            background: #d52b1e;
+            border-color: #d52b1e;
         }
 
         .checkbox.checked::after {
@@ -208,7 +215,9 @@
         .empty-state {
             text-align: center;
             padding: 48px 24px;
-            color: var(--tg-theme-hint-color, #999999);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .empty-icon {
@@ -218,12 +227,13 @@
 
         .empty-text {
             font-size: 16px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <span style="font-size: 28px;">📋</span>
+        <span style="font-size: 28px;">🇨🇭</span>
         <h1>Дневник задач</h1>
     </div>
 
