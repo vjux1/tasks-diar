@@ -29,7 +29,6 @@
             position: relative;
         }
 
-        /* Тёмный оверлей для читаемости */
         body::before {
             content: '';
             position: fixed;
@@ -37,7 +36,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Чуть прозрачнее, чтобы видеть детали фона */
+            background: rgba(0, 0, 0, 0.7);
             z-index: 0;
         }
 
@@ -49,7 +48,6 @@
             z-index: 1;
         }
 
-        /* === ВЕРХНЯЯ НАВИГАЦИЯ === */
         .app-header {
             text-align: center;
             margin-bottom: 28px;
@@ -113,7 +111,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* === ОБЩИЕ КАРТОЧКИ === */
         .card {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -131,7 +128,6 @@
             color: white;
         }
 
-        /* === СТАТИСТИКА === */
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -162,7 +158,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* === LEVEL CARD === */
         .level-card {
             text-align: center;
             padding: 24px 20px;
@@ -191,9 +186,11 @@
         .level-icon svg {
             width: 40px;
             height: 40px;
-            fill: #FF0000;
+            fill: none;
             stroke: #FF0000;
-            stroke-width: 0.3;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .level-name {
@@ -223,7 +220,6 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* === ПОЛЯ ВВОДА === */
         .input-container {
             display: flex;
             gap: 12px;
@@ -275,7 +271,6 @@
             transform: scale(0.95);
         }
 
-        /* === ФИЛЬТРЫ === */
         .filters {
             display: flex;
             gap: 10px;
@@ -308,7 +303,6 @@
             border-color: #FF0000;
         }
 
-        /* === СПИСОК ЗАДАЧ === */
         .tasks-list {
             display: flex;
             flex-direction: column;
@@ -384,7 +378,6 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* === PROFIT === */
         .profit-inputs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -486,7 +479,6 @@
             margin-top: 16px;
         }
 
-        /* === ЗАМЕТКИ === */
         .notepad-container {
             position: relative;
         }
@@ -533,7 +525,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- ВЕРХНЯЯ НАВИГАЦИЯ -->
         <div class="app-header">
             <h1 class="app-title">VJUX WORK</h1>
             <div class="tabs">
@@ -563,7 +554,7 @@
             <div class="card level-card">
                 <div class="level-title">УРОВЕНЬ ПРОДУКТИВНОСТИ</div>
                 <div class="level-icon" id="levelIcon">
-                    <svg viewBox="0 0 24 24"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12,2C8.5,2 6,4 6,7C6,8 6,9 6,10C6,11 7,12 8,13C9,14 10,15 10,16C10,17 9,18 8,19C7,20 7,21 7,21H17C17,21 17,20 16,19C15,18 14,17 14,16C14,15 15,14 16,13C17,12 18,11 18,10C18,9 18,8 18,7C18,4 15.5,2 12,2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <div class="level-name" id="levelName">Новичок</div>
                 <div class="level-progress-bar">
@@ -653,7 +644,6 @@
             tg.expand();
         }
 
-        // Данные
         let tasks = JSON.parse(localStorage.getItem('ch_tasks')) || [];
         let profitGoal = parseInt(localStorage.getItem('ch_profit_goal')) || 5000;
         let profitCurrent = parseInt(localStorage.getItem('ch_profit_current')) || 0;
@@ -669,27 +659,26 @@
             localStorage.setItem('ch_xp', xp);
         }
 
-        // === СИСТЕМА УРОВНЕЙ ===
         const LEVELS = [
             { 
                 min: 0, max: 9, 
                 title: "Новичок", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/></svg>`
+                icon: `<svg viewBox="0 0 24 24"><path d="M12,2C8.5,2 6,4 6,7C6,8 6,9 6,10C6,11 7,12 8,13C9,14 10,15 10,16C10,17 9,18 8,19C7,20 7,21 7,21H17C17,21 17,20 16,19C15,18 14,17 14,16C14,15 15,14 16,13C17,12 18,11 18,10C18,9 18,8 18,7C18,4 15.5,2 12,2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
             },
             { 
                 min: 10, max: 29, 
                 title: "Горный восходитель", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M21,16V22H3V16L5,14V11C5,8.5 6.5,6.5 9,6.5C10.5,6.5 12,7.5 12,7.5C12,7.5 13.5,6.5 15,6.5C17.5,6.5 19,8.5 19,11V14L21,16M12,4.5C11,4.5 10,5 10,6C10,7 11,7.5 12,7.5C13,7.5 14,7 14,6C14,5 13,4.5 12,4.5Z"/></svg>`
+                icon: `<svg viewBox="0 0 24 24"><path d="M3,18L9,12L12,15L18,9L21,12V21H3V18Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,6L15,9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
             },
             { 
                 min: 30, max: 59, 
                 title: "Мастер часов", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4C14,4 16,5 17.5,6.5C19,8 20,10 20,12C20,14 19,16 17.5,17.5C16,19 14,20 12,20C10,20 8,19 6.5,17.5C5,16 4,14 4,12C4,10 5,8 6.5,6.5C8,5 10,4 12,4M12,6C10.5,6 9,7.5 9,9H15C15,7.5 13.5,6 12,6M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>`
+                icon: `<svg viewBox="0 0 24 24"><path d="M12,2V6L15,7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,22V18L9,16.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`
             },
             { 
                 min: 60, max: Infinity, 
                 title: "Банкир VJUX", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M21,11H18V10.5C18,8.57 16.43,7 14.5,7C13.26,7 12.16,7.63 11.5,8.5C10.84,7.63 9.74,7 8.5,7C6.57,7 5,8.57 5,10.5V11H3V21H21V11M14.5,9C15.33,9 16,9.67 16,10.5V11H13V10.5C13,9.67 13.67,9 14.5,9M8.5,9C9.33,9 10,9.67 10,10.5V11H7V10.5C7,9.67 7.67,9 8.5,9M12,12.5A2.5,2.5 0 0,1 9.5,15A2.5,2.5 0 0,1 12,17.5A2.5,2.5 0 0,1 14.5,15A2.5,2.5 0 0,1 12,12.5M12,14A1,1 0 0,0 11,15A1,1 0 0,0 12,16A1,1 0 0,0 13,15A1,1 0 0,0 12,14Z"/></svg>`
+                icon: `<svg viewBox="0 0 24 24"><path d="M3,21V10L12,3L21,10V21H3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12,13H14V17H10V13H12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
             }
         ];
 
@@ -730,7 +719,6 @@
             }
         }
 
-        // === ЗАДАЧИ ===
         function updateStats() {
             const total = tasks.length;
             const completed = tasks.filter(t => t.completed).length;
@@ -825,7 +813,6 @@
             renderTasks();
         }
 
-        // === PROFIT ===
         function updateProfit() {
             const goal = parseInt(document.getElementById('profitGoal').value) || 0;
             const current = parseInt(document.getElementById('profitCurrent').value) || 0;
@@ -855,7 +842,6 @@
             }
         }
 
-        // === NOTEPAD ===
         const notepadTextarea = document.getElementById('notepadText');
         const charCountEl = document.getElementById('charCount');
 
@@ -879,7 +865,6 @@
             }
         });
 
-        // === СОБЫТИЯ ===
         document.getElementById('addBtn').addEventListener('click', addTask);
         document.getElementById('taskInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addTask();
@@ -908,7 +893,6 @@
             });
         });
 
-        // Загрузка данных
         document.getElementById('profitGoal').value = profitGoal;
         document.getElementById('profitCurrent').value = profitCurrent;
         notepadTextarea.value = notepadText;
