@@ -521,6 +521,34 @@
         .save-btn:active {
             transform: scale(0.98);
         }
+
+        /* === ФОТО В НИЖНЕМ ПРАВОМ УГЛУ === */
+        .footer-logo {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 15vw;
+            height: 15vh;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .footer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-logo:hover img {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
     </style>
 </head>
 <body>
@@ -635,6 +663,11 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- ФОТО В НИЖНЕМ ПРАВОМ УГЛУ -->
+    <div class="footer-logo">
+        <img src="https://play-lh.googleusercontent.com/JWv5RcaYotrhYCOtIO61psqoix_ULnHFcgDvZyNJ_GO5-_KtYSjZcY6FABaWrJUBdg" alt="Логотип">
     </div>
 
     <script>
