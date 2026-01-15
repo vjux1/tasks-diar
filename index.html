@@ -17,17 +17,36 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            background-image: url('https://media.istockphoto.com/id/510437875/ru/%D1%84%D0%BE%D1%82%D0%BE/%D1%88%D0%B2%D0%B5%D0%B9%D1%86%D0%B0%D1%80%D0%B8%D1%8F-%D0%BD%D0%B0%D1%86%D0%B8%D0%BE%D0%BD%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D1%84%D0%BB%D0%B0%D0%B3-%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%B0-%D1%81%D0%B2%D0%B5%D1%82%D0%B0-%D0%B1%D0%BE%D0%BA%D0%B5-%D1%84%D0%BE%D0%BD-3d-%D0%BD%D0%BE%D1%87%D1%8C.jpg?s=170667a&w=0&k=20&c=j5yYcF51IiqSyCj4B7a8BizwR-JUgtmDBoD86TOXrFE=');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: #ffffff;
             min-height: 100vh;
             padding: 0;
             line-height: 1.5;
+            position: relative;
+        }
+
+        /* Тёмный оверлей для читаемости */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Чуть прозрачнее, чтобы видеть детали фона */
+            z-index: 0;
         }
 
         .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 24px 16px;
+            position: relative;
+            z-index: 1;
         }
 
         /* === ВЕРХНЯЯ НАВИГАЦИЯ === */
