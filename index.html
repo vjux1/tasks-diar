@@ -110,6 +110,73 @@
             letter-spacing: 0.5px;
         }
 
+        /* === LEVEL CARD === */
+        .level-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 24px 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .level-title {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .level-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 0, 0, 0.12);
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+        }
+
+        .level-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #FF0000;
+            stroke: #FF0000;
+            stroke-width: 0.3;
+        }
+
+        .level-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 14px;
+        }
+
+        .level-progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 auto 10px;
+            max-width: 280px;
+        }
+
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF0000, #cc0000);
+            transition: width 0.5s ease;
+        }
+
+        .level-xp-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
         .input-container {
             display: flex;
             gap: 12px;
@@ -612,6 +679,19 @@
                 </div>
             </div>
 
+            <!-- LEVEL CARD — ОБНОВЛЁННАЯ -->
+            <div class="level-card">
+                <div class="level-title">УРОВЕНЬ ПРОДУКТИВНОСТИ</div>
+                <div class="level-icon" id="levelIcon">
+                    <svg viewBox="0 0 24 24"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/></svg>
+                </div>
+                <div class="level-name" id="levelName">Новичок</div>
+                <div class="level-progress-bar">
+                    <div class="level-progress-fill" id="levelProgressFill" style="width: 0%"></div>
+                </div>
+                <div class="level-xp-text" id="levelXpText">0 / 10 XP</div>
+            </div>
+
             <div class="input-container">
                 <input type="text" class="task-input" id="taskInput" placeholder="Добавить новую задачу...">
                 <button class="add-btn" id="addBtn">+</button>
@@ -719,6 +799,7 @@
         let profitGoal = parseInt(localStorage.getItem('ch_profit_goal')) || 5000;
         let profitCurrent = parseInt(localStorage.getItem('ch_profit_current')) || 0;
         let notepadText = localStorage.getItem('ch_notepad') || '';
+        let xp = parseInt(localStorage.getItem('ch_xp')) || 0;
         let currentFilter = 'all';
 
         function saveData() {
@@ -726,6 +807,68 @@
             localStorage.setItem('ch_profit_goal', profitGoal);
             localStorage.setItem('ch_profit_current', profitCurrent);
             localStorage.setItem('ch_notepad', notepadText);
+            localStorage.setItem('ch_xp', xp);
+        }
+
+        // === СИСТЕМА УРОВНЕЙ ===
+        const LEVELS = [
+            { 
+                min: 0, max: 9, 
+                title: "Новичок", 
+                icon: `<svg viewBox="0 0 24 24"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/></svg>` // 🇨🇭
+            },
+            { 
+                min: 10, max: 29, 
+                title: "Горный восходитель", 
+                icon: `<svg viewBox="0 0 24 24"><path d="M21,16V22H3V16L5,14V11C5,8.5 6.5,6.5 9,6.5C10.5,6.5 12,7.5 12,7.5C12,7.5 13.5,6.5 15,6.5C17.5,6.5 19,8.5 19,11V14L21,16M12,4.5C11,4.5 10,5 10,6C10,7 11,7.5 12,7.5C13,7.5 14,7 14,6C14,5 13,4.5 12,4.5Z"/></svg>` // 🥾
+            },
+            { 
+                min: 30, max: 59, 
+                title: "Мастер часов", 
+                icon: `<svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4C14,4 16,5 17.5,6.5C19,8 20,10 20,12C20,14 19,16 17.5,17.5C16,19 14,20 12,20C10,20 8,19 6.5,17.5C5,16 4,14 4,12C4,10 5,8 6.5,6.5C8,5 10,4 12,4M12,6C10.5,6 9,7.5 9,9H15C15,7.5 13.5,6 12,6M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>` // ⌚
+            },
+            { 
+                min: 60, max: Infinity, 
+                title: "Банкир VJUX", 
+                icon: `<svg viewBox="0 0 24 24"><path d="M21,11H18V10.5C18,8.57 16.43,7 14.5,7C13.26,7 12.16,7.63 11.5,8.5C10.84,7.63 9.74,7 8.5,7C6.57,7 5,8.57 5,10.5V11H3V21H21V11M14.5,9C15.33,9 16,9.67 16,10.5V11H13V10.5C13,9.67 13.67,9 14.5,9M8.5,9C9.33,9 10,9.67 10,10.5V11H7V10.5C7,9.67 7.67,9 8.5,9M12,12.5A2.5,2.5 0 0,1 9.5,15A2.5,2.5 0 0,1 12,17.5A2.5,2.5 0 0,1 14.5,15A2.5,2.5 0 0,1 12,12.5M12,14A1,1 0 0,0 11,15A1,1 0 0,0 12,16A1,1 0 0,0 13,15A1,1 0 0,0 12,14Z"/></svg>` // 🏦
+            }
+        ];
+
+        function getCurrentLevelInfo(xp) {
+            for (let level of LEVELS) {
+                if (xp >= level.min && xp <= level.max) {
+                    return {
+                        level,
+                        current: xp,
+                        next: level.max === Infinity ? null : level.max + 1,
+                        progress: level.max === Infinity ? 100 : Math.min(100, Math.round(((xp - level.min) / (level.max - level.min + 1)) * 100))
+                    };
+                }
+            }
+            return { level: LEVELS[0], current: 0, next: 10, progress: 0 };
+        }
+
+        function updateLevel() {
+            const info = getCurrentLevelInfo(xp);
+            const { level, current, next, progress } = info;
+
+            document.getElementById('levelName').textContent = level.title;
+            document.getElementById('levelIcon').innerHTML = level.icon;
+            document.getElementById('levelProgressFill').style.width = progress + '%';
+            
+            if (next === null) {
+                document.getElementById('levelXpText').textContent = `${current} XP • Макс. уровень`;
+            } else {
+                document.getElementById('levelXpText').textContent = `${current} / ${next} XP`;
+            }
+        }
+
+        function showLevelUpNotification(newLevelTitle) {
+            if (tg) {
+                tg.showAlert(`🎉 Повышение уровня!\nТеперь вы: ${newLevelTitle}`);
+            } else {
+                alert(`🎉 Повышение уровня!\nТеперь вы: ${newLevelTitle}`);
+            }
         }
 
         // === ЗАДАЧИ ===
@@ -794,7 +937,23 @@
         function toggleTask(id) {
             const task = tasks.find(t => t.id === id);
             if (task) {
+                const wasCompleted = task.completed;
                 task.completed = !task.completed;
+
+                if (!wasCompleted && task.completed) {
+                    const oldXp = xp;
+                    xp += 1;
+                    const oldLevel = getCurrentLevelInfo(oldXp).level.title;
+                    const newLevel = getCurrentLevelInfo(xp).level.title;
+                    if (newLevel !== oldLevel) {
+                        showLevelUpNotification(newLevel);
+                    }
+                    updateLevel();
+                } else if (wasCompleted && !task.completed) {
+                    xp = Math.max(0, xp - 1);
+                    updateLevel();
+                }
+
                 saveData();
                 updateStats();
                 renderTasks();
@@ -802,6 +961,11 @@
         }
 
         function deleteTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task && task.completed) {
+                xp = Math.max(0, xp - 1);
+                updateLevel();
+            }
             tasks = tasks.filter(t => t.id !== id);
             saveData();
             updateStats();
@@ -901,6 +1065,7 @@
         updateStats();
         updateProfit();
         updateCharCount();
+        updateLevel();
         renderTasks();
     </script>
 </body>
