@@ -772,7 +772,11 @@
         <img src="https://foni.papik.pro/uploads/posts/2024-09/foni-papik-pro-fjzl-p-kartinki-kot-vzhukh-na-prozrachnom-fone-8.png" alt="Логотип">
     </div>
 
+    <!-- Конфетти -->
     <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
+    
+    <!-- Снег -->
+    <canvas id="snow-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;"></canvas>
 
     <script>
         let tg = window.Telegram?.WebApp;
@@ -1071,7 +1075,77 @@
             saveData();
         });
 
-        // Confetti
+        // ❄️ Snow effect
+        (function() {
+            const canvas = document.getElementById('snow-canvas');
+            const ctx = canvas.getContext('2d');
+            let snowflakes = [];
+            let animationFrame;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            class Snowflake {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * -canvas.height;
+                    this.radius = Math.random() * 2 + 1;
+                    this.speed = Math.random() * 1 + 0.2;
+                    this.opacity = Math.random() * 0.5 + 0.3;
+                    this.drift = (Math.random() - 0.5) * 0.5;
+                }
+
+                update() {
+                    this.y += this.speed;
+                    this.x += this.drift;
+                    if (this.y > canvas.height) {
+                        this.y = -10;
+                        this.x = Math.random() * canvas.width;
+                    }
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.x < 0) this.x = canvas.width;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            function initSnow() {
+                const count = Math.min(100, Math.floor(window.innerWidth / 8));
+                snowflakes = [];
+                for (let i = 0; i < count; i++) {
+                    snowflakes.push(new Snowflake());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                snowflakes.forEach(flake => {
+                    flake.update();
+                    flake.draw();
+                });
+                animationFrame = requestAnimationFrame(animate);
+            }
+
+            initSnow();
+            animate();
+
+            const observer = new MutationObserver(() => {
+                initSnow();
+            });
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        })();
+
+        // 🎉 Confetti
         function launchConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
@@ -1106,9 +1180,7 @@
                     c.rotation += c.rotationSpeed;
                     c.speed *= 0.99;
                     c.y += gravity;
-
                     if (c.y < canvas.height) alive = true;
-
                     ctx.save();
                     ctx.translate(c.x, c.y);
                     ctx.rotate(c.rotation * Math.PI / 180);
@@ -1116,7 +1188,6 @@
                     ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
                     ctx.restore();
                 });
-
                 if (alive) requestAnimationFrame(animate);
             }
 
