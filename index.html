@@ -522,13 +522,12 @@
             transform: scale(0.98);
         }
 
-        /* === ФОТО В НИЖНЕМ ПРАВОМ УГЛУ — БЕЗ ФОНА === */
         .footer-logo {
             position: fixed;
             bottom: 15px;
             right: 15px;
-            width: 15vw;
-            height: 15vh;
+            width: 20vw;
+            height: 20vh;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -539,7 +538,7 @@
         .footer-logo img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             filter: brightness(0.9) contrast(1.1);
             transition: transform 0.3s ease;
         }
@@ -561,7 +560,6 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА: ЗАДАЧИ -->
         <div class="tabs-wrapper active" id="tasks-tab">
             <div class="stats">
                 <div class="stat-card">
@@ -606,7 +604,6 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА: PROFIT -->
         <div class="tabs-wrapper" id="profit-tab">
             <div class="card">
                 <div class="section-title">Трекер прибыли</div>
@@ -645,7 +642,6 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА: ACCOUNT -->
         <div class="tabs-wrapper" id="account-tab">
             <div class="card">
                 <div class="section-title">Заметки</div>
@@ -664,9 +660,8 @@
         </div>
     </div>
 
-    <!-- ФОТО В НИЖНЕМ ПРАВОМ УГЛУ — БЕЗ ФОНА -->
     <div class="footer-logo">
-        <img src="https://play-lh.googleusercontent.com/JWv5RcaYotrhYCOtIO61psqoix_ULnHFcgDvZyNJ_GO5-_KtYSjZcY6FABaWrJUBdg" alt="Логотип">
+        <img src="https://png.klev.club/uploads/posts/2024-05/png-klev-club-6mvx-p-vzhukh-kot-png-5.png" alt="Логотип">
     </div>
 
     <script>
@@ -692,26 +687,10 @@
         }
 
         const LEVELS = [
-            { 
-                min: 0, max: 9, 
-                title: "Новичок", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M12,2C8.5,2 6,4 6,7C6,8 6,9 6,10C6,11 7,12 8,13C9,14 10,15 10,16C10,17 9,18 8,19C7,20 7,21 7,21H17C17,21 17,20 16,19C15,18 14,17 14,16C14,15 15,14 16,13C17,12 18,11 18,10C18,9 18,8 18,7C18,4 15.5,2 12,2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-            },
-            { 
-                min: 10, max: 29, 
-                title: "Горный восходитель", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M3,18L9,12L12,15L18,9L21,12V21H3V18Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,6L15,9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
-            },
-            { 
-                min: 30, max: 59, 
-                title: "Мастер часов", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M12,2V6L15,7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,22V18L9,16.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`
-            },
-            { 
-                min: 60, max: Infinity, 
-                title: "Банкир VJUX", 
-                icon: `<svg viewBox="0 0 24 24"><path d="M3,21V10L12,3L21,10V21H3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12,13H14V17H10V13H12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
-            }
+            { min: 0, max: 9, title: "Новичок", icon: `<svg viewBox="0 0 24 24"><path d="M12,2C8.5,2 6,4 6,7C6,8 6,9 6,10C6,11 7,12 8,13C9,14 10,15 10,16C10,17 9,18 8,19C7,20 7,21 7,21H17C17,21 17,20 16,19C15,18 14,17 14,16C14,15 15,14 16,13C17,12 18,11 18,10C18,9 18,8 18,7C18,4 15.5,2 12,2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+            { min: 10, max: 29, title: "Горный восходитель", icon: `<svg viewBox="0 0 24 24"><path d="M3,18L9,12L12,15L18,9L21,12V21H3V18Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,6L15,9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>` },
+            { min: 30, max: 59, title: "Мастер часов", icon: `<svg viewBox="0 0 24 24"><path d="M12,2V6L15,7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,22V18L9,16.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>` },
+            { min: 60, max: Infinity, title: "Банкир VJUX", icon: `<svg viewBox="0 0 24 24"><path d="M3,21V10L12,3L21,10V21H3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12,13H14V17H10V13H12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>` }
         ];
 
         function getCurrentLevelInfo(xp) {
