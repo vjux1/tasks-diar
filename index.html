@@ -1,679 +1,1213 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Мои задачи</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <style>
-    :root {
-      --bg: #0f0f1b;
-      --card-bg: rgba(20, 20, 35, 0.7);
-      --text-color: #e0e0ff;
-      --accent: #6a5acd;
-      --input-bg: rgba(30, 30, 50, 0.6);
-      --border-radius: 16px;
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      --completed: #4ade80;
-      --pending: #f87171;
-      --profit: #fbbf24;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VJUX WORK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.06);
+            --overlay-bg: rgba(0, 0, 0, 0.7);
+            --accent: #FF0000;
+            --placeholder: rgba(255, 255, 255, 0.5);
+        }
 
-    body {
-      background: linear-gradient(135deg, var(--bg), #1a1a2e);
-      background-image: url('bg.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      color: var(--text-color);
-      min-height: 100vh;
-      padding: 0;
-      overflow-x: hidden;
-    }
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --text-color: #1a1a1a;
+            --card-bg: rgba(0, 0, 0, 0.04);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.04);
+            --overlay-bg: rgba(255, 255, 255, 0.85);
+            --accent: #d32f2f;
+            --placeholder: rgba(0, 0, 0, 0.5);
+        }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-image: url('https://media.istockphoto.com/id/510437875/ru/%D1%84%D0%BE%D1%82%D0%BE/%D1%88%D0%B2%D0%B5%D0%B9%D1%86%D0%B0%D1%80%D0%B8%D1%8F-%D0%BD%D0%B0%D1%86%D0%B8%D0%BE%D0%BD%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D1%84%D0%BB%D0%B0%D0%B3-%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%B0-%D1%81%D0%B2%D0%B5%D1%82%D0%B0-%D0%B1%D0%BE%D0%BA%D0%B5-%D1%84%D0%BE%D0%BD-3d-%D0%BD%D0%BE%D1%87%D1%8C.jpg?s=170667a&w=0&k=20&c=j5yYcF51IiqSyCj4B7a8BizwR-JUgtmDBoD86TOXrFE=');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 0;
+            line-height: 1.5;
+            position: relative;
+        }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid rgba(106, 90, 205, 0.3);
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-bg);
+            z-index: 0;
+        }
 
-    h1 {
-      font-size: 28px;
-      font-weight: 600;
-      background: linear-gradient(to right, #a78bfa, #c4b5fd);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            position: relative;
+            z-index: 1;
+        }
 
-    .tabs {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+        .app-header {
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+        }
 
-    .tab {
-      background: var(--card-bg);
-      border: none;
-      color: var(--text-color);
-      padding: 8px 16px;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: 500;
-    }
+        .app-title {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #ffffff 0%, #cccccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    .tab.active, .tab:hover {
-      background: var(--accent);
-      color: white;
-    }
+        .theme-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            color: var(--text-color);
+        }
 
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-    }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            margin: 0 auto;
+            max-width: 400px;
+        }
 
-    .section-title {
-      font-size: 18px;
-      margin-bottom: 16px;
-      color: #c4b5fd;
-      font-weight: 600;
-    }
+        .tab {
+            flex: 1;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .task-input,
-    .note-input,
-    .profit-input {
-      width: 100%;
-      padding: 12px;
-      background: var(--input-bg);
-      border: 1px solid rgba(106, 90, 205, 0.4);
-      border-radius: 12px;
-      color: var(--text-color);
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-    .task-input:focus,
-    .note-input:focus,
-    .profit-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
+        .tab:hover::before {
+            opacity: 1;
+        }
 
-    .add-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+        .tab:hover {
+            color: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+        }
 
-    .input-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
+        .tab.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+            transform: scale(1.02);
+        }
 
-    .filter-buttons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
+        .tab.active::before {
+            opacity: 0;
+        }
 
-    .filter-btn {
-      background: var(--input-bg);
-      border: 1px solid rgba(106, 90, 205, 0.4);
-      color: var(--text-color);
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-    }
+        .tabs-wrapper {
+            display: none;
+        }
 
-    .filter-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
+        .tabs-wrapper.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
 
-    .task-item {
-      display: flex;
-      align-items: center;
-      padding: 12px;
-      background: rgba(30, 30, 50, 0.5);
-      border-radius: 10px;
-      margin-bottom: 12px;
-      position: relative;
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .task-checkbox {
-      margin-right: 12px;
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
 
-    .task-text {
-      flex: 1;
-      word-break: break-word;
-      font-size: 16px;
-    }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-color);
+        }
 
-    .task-text.completed {
-      text-decoration: line-through;
-      color: #888;
-    }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
 
-    .task-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-left: 10px;
-    }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
 
-    .delete-btn {
-      background: none;
-      border: none;
-      color: #ff6b6b;
-      font-size: 18px;
-      cursor: pointer;
-      margin-left: 10px;
-    }
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
 
-    .stats {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
-      font-size: 14px;
-      color: #aaa;
-    }
+        .stat-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    .xp-bar {
-      height: 8px;
-      background: rgba(100, 100, 120, 0.3);
-      border-radius: 4px;
-      margin-top: 8px;
-      overflow: hidden;
-    }
+        .level-card {
+            text-align: center;
+            padding: 24px 20px;
+        }
 
-    .xp-fill {
-      height: 100%;
-      background: linear-gradient(to right, #8b5cf6, #c084fc);
-      width: 0%;
-      transition: width 0.4s ease;
-    }
+        .level-title {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-    .empty-state {
-      color: #666;
-      font-style: italic;
-      text-align: center;
-      padding: 16px;
-    }
+        .level-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 0, 0, 0.12);
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+        }
 
-    .hidden {
-      display: none;
-    }
+        .level-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
 
-    .progress-circle {
-      width: 120px;
-      height: 120px;
-      position: relative;
-      margin: 0 auto 16px;
-    }
+        .level-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 14px;
+        }
 
-    .progress-bg, .progress-fill {
-      fill: none;
-      stroke-width: 10;
-      r: 50;
-      cx: 60;
-      cy: 60;
-    }
+        .level-progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 auto 10px;
+            max-width: 280px;
+        }
 
-    .progress-bg {
-      stroke: rgba(106, 90, 205, 0.2);
-    }
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #cc0000);
+            transition: width 0.5s ease;
+        }
 
-    .progress-fill {
-      stroke: var(--profit);
-      stroke-linecap: round;
-      transform: rotate(-90deg);
-      transform-origin: 60px 60px;
-      transition: stroke-dashoffset 0.5s ease;
-    }
+        .level-xp-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
 
-    .progress-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 20px;
-      font-weight: bold;
-      color: var(--text-color);
-    }
+        .input-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-    .snowflake {
-      position: absolute;
-      color: white;
-      font-size: 1em;
-      opacity: 0.8;
-      user-select: none;
-      z-index: -1;
-    }
+        .task-input,
+        .profit-input,
+        .notepad-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 15px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
 
-    .logo {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      font-size: 24px;
-      color: var(--accent);
-      opacity: 0.7;
-    }
+        .task-input:focus,
+        .profit-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-      .input-row, .filter-buttons {
-        flex-direction: column;
-        gap: 8px;
-      }
-      .add-btn {
-        align-self: flex-start;
-      }
-    }
-  </style>
+        .task-input::placeholder {
+            color: var(--placeholder);
+        }
+
+        .add-btn {
+            width: 52px;
+            height: 52px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 26px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .add-btn:active {
+            transform: scale(0.95);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding: 4px 0;
+        }
+
+        .filters::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-btn {
+            padding: 8px 18px;
+            border: none;
+            background: var(--card-bg);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        .checkbox {
+            width: 26px;
+            height: 26px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--card-bg);
+        }
+
+        .checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 15px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .delete-btn {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 0, 0, 0.1);
+            color: var(--accent);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .profit-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .profit-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .profit-input-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profit-input {
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .progress-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, #cc0000 100%);
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .progress-circle {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.15);
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-percent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .goal-achieved {
+            text-align: center;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent) 0%, #cc0000 100%);
+            color: white;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 16px;
+        }
+
+        .notepad-container {
+            position: relative;
+        }
+
+        .notepad-textarea {
+            min-height: 300px;
+            resize: vertical;
+            font-family: 'Consolas', monospace;
+            line-height: 1.6;
+        }
+
+        .notepad-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .save-btn {
+            padding: 10px 24px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        }
+
+        .save-btn:active {
+            transform: scale(0.98);
+        }
+
+        .footer-logo {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 160px;
+            height: 160px;
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .footer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: brightness(1.1) contrast(1.15) saturate(1.1);
+            opacity: 0.95;
+        }
+
+        .footer-logo:hover {
+            background: rgba(0, 0, 0, 0.85);
+            border-color: rgba(255, 0, 0, 0.4);
+            box-shadow: 0 8px 30px rgba(255, 0, 0, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .footer-logo:hover img {
+            transform: scale(1.15) rotate(5deg);
+            filter: brightness(1.3) contrast(1.25) saturate(1.3);
+        }
+
+        .tag-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Мои задачи</h1>
-      <div id="xpDisplay">Уровень: <span id="level">1</span> | XP: <span id="xp">0</span>/<span id="nextLevelXp">100</span></div>
-    </header>
+    <div class="container">
+        <div class="app-header">
+            <h1 class="app-title">VJUX WORK</h1>
+            <div class="theme-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </div>
+            <div class="tabs">
+                <button class="tab active" data-tab="tasks">Задачи</button>
+                <button class="tab" data-tab="profit">Profit</button>
+                <button class="tab" data-tab="account">Заметки</button>
+            </div>
+        </div>
 
-    <div class="tabs">
-      <button class="tab active" data-tab="tasks">Задачи</button>
-      <button class="tab" data-tab="notes">Заметки</button>
-      <button class="tab" data-tab="profit">Прибыль</button>
+        <div class="tabs-wrapper active" id="tasks-tab">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">Всего</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeCount">0</div>
+                    <div class="stat-label">Активных</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-label">Выполнено</div>
+                </div>
+            </div>
+
+            <div class="card level-card">
+                <div class="level-title">УРОВЕНЬ ПРОДУКТИВНОСТИ</div>
+                <div class="level-icon" id="levelIcon">
+                    <svg viewBox="0 0 24 24"><path d="M12,2C8.5,2 6,4 6,7C6,8 6,9 6,10C6,11 7,12 8,13C9,14 10,15 10,16C10,17 9,18 8,19C7,20 7,21 7,21H17C17,21 17,20 16,19C15,18 14,17 14,16C14,15 15,14 16,13C17,12 18,11 18,10C18,9 18,8 18,7C18,4 15.5,2 12,2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="level-name" id="levelName">Новичок</div>
+                <div class="level-progress-bar">
+                    <div class="level-progress-fill" id="levelProgressFill" style="width: 0%"></div>
+                </div>
+                <div class="level-xp-text" id="levelXpText">0 / 10 XP</div>
+            </div>
+
+            <!-- Daily Progress & Streak -->
+            <div class="card">
+                <div class="section-title">Сегодня</div>
+                <div class="progress-bar" style="height: 10px; margin: 12px 0; background: var(--border-color);">
+                    <div class="progress-bar-fill" id="dailyProgressFill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), #cc0000); border-radius: 5px;"></div>
+                </div>
+                <div class="progress-text" id="dailyProgressText">0 / 0 задач</div>
+            </div>
+
+            <div class="card" style="text-align: center; padding: 16px;">
+                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">🔥 Серия дней</div>
+                <div style="font-size: 28px; font-weight: 800; color: var(--accent);" id="streakCounter">0</div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.6);">дней подряд</div>
+            </div>
+
+            <div class="input-container">
+                <input type="text" class="task-input" id="taskInput" placeholder="Добавить новую задачу...">
+                <select id="taskColor" class="task-input" style="width: 80px; padding: 14px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 12px;">
+                    <option value="#FF0000">🔴 Красный</option>
+                    <option value="#4CAF50">🟢 Зелёный</option>
+                    <option value="#2196F3">🔵 Синий</option>
+                    <option value="#FF9800">🟠 Оранжевый</option>
+                    <option value="#9C27B0">🟣 Фиолетовый</option>
+                </select>
+                <button class="add-btn" id="addBtn">+</button>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">📄 Все</button>
+                <button class="filter-btn" data-filter="active">⚙️ Активные</button>
+                <button class="filter-btn" data-filter="completed">✅ Выполненные</button>
+            </div>
+
+            <div class="tasks-list" id="tasksList">
+                <div class="empty-state">📝 Нет задач</div>
+            </div>
+        </div>
+
+        <div class="tabs-wrapper" id="profit-tab">
+            <div class="card">
+                <div class="section-title">Трекер прибыли</div>
+                
+                <div class="profit-inputs">
+                    <div class="profit-input-group">
+                        <label class="profit-input-label">Целевая сумма</label>
+                        <input type="number" class="profit-input" id="profitGoal" placeholder="5000" value="5000">
+                    </div>
+                    <div class="profit-input-group">
+                        <label class="profit-input-label">Заработано</label>
+                        <input type="number" class="profit-input" id="profitCurrent" placeholder="0" value="0">
+                    </div>
+                </div>
+
+                <div class="progress-wrapper">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" id="profitProgressFill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="profitProgressText">0 / 5000 CHF</div>
+                    </div>
+
+                    <div class="progress-circle">
+                        <svg width="80" height="80">
+                            <circle class="progress-ring-bg" cx="40" cy="40" r="32"/>
+                            <circle class="progress-ring-fill" id="profitProgressRing" cx="40" cy="40" r="32"/>
+                        </svg>
+                        <div class="progress-percent" id="profitProgressPercent">0%</div>
+                    </div>
+                </div>
+
+                <div id="profitGoalAchieved" style="display: none;" class="goal-achieved">
+                    ✓ Цель достигнута!
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-wrapper" id="account-tab">
+            <div class="card">
+                <div class="section-title">Заметки</div>
+                <div class="notepad-container">
+                    <textarea 
+                        class="notepad-textarea" 
+                        id="notepadText" 
+                        placeholder="Начните вводить текст..."></textarea>
+                    
+                    <div class="notepad-footer">
+                        <div class="char-count" id="charCount">0 символов</div>
+                        <button class="save-btn" id="saveNoteBtn">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Задачи -->
-    <div id="tasks-tab" class="card">
-      <div class="section-title">Добавить новую задачу</div>
-      <div class="input-row">
-        <input type="text" id="taskInput" class="task-input" placeholder="Введите задачу..." />
-        <select id="taskColor" class="task-input" style="width: auto; padding: 12px;">
-          <option value="#8b5cf6">Фиолетовый</option>
-          <option value="#ef4444">Красный</option>
-          <option value="#10b981">Зелёный</option>
-          <option value="#f59e0b">Оранжевый</option>
-          <option value="#3b82f6">Синий</option>
-        </select>
-        <button id="addTaskBtn" class="add-btn">+</button>
-      </div>
-
-      <div class="filter-buttons">
-        <button class="filter-btn active" data-filter="all">Все</button>
-        <button class="filter-btn" data-filter="active">Активные</button>
-        <button class="filter-btn" data-filter="completed">Выполнено</button>
-      </div>
-
-      <div id="tasksList">
-        <div class="empty-state">Нет задач</div>
-      </div>
-
-      <div class="stats">
-        <span>Всего: <span id="totalTasks">0</span></span>
-        <span>Активных: <span id="activeTasks">0</span></span>
-        <span>Выполнено: <span id="completedTasks">0</span></span>
-      </div>
+    <div class="footer-logo">
+        <img src="https://foni.papik.pro/uploads/posts/2024-09/foni-papik-pro-fjzl-p-kartinki-kot-vzhukh-na-prozrachnom-fone-8.png" alt="Логотип">
     </div>
 
-    <!-- Заметки -->
-    <div id="notes-tab" class="card hidden">
-      <div class="section-title">Заметки</div>
-      <textarea id="noteInput" class="note-input" rows="5" placeholder="Введите заметку..."></textarea>
-      <div style="text-align: right; color: #aaa; font-size: 14px;">
-        <span id="charCount">0</span>/1000
-      </div>
-      <button id="saveNoteBtn" class="add-btn" style="align-self: flex-start; margin-top: 8px;">💾</button>
-    </div>
+    <!-- Конфетти -->
+    <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
+    
+    <!-- Снег -->
+    <canvas id="snow-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;"></canvas>
 
-    <!-- Прибыль -->
-    <div id="profit-tab" class="card hidden">
-      <div class="section-title">Трекер прибыли</div>
-      <div class="input-row">
-        <input type="number" id="targetInput" class="profit-input" placeholder="Цель (CHF)" />
-        <input type="number" id="currentInput" class="profit-input" placeholder="Текущая прибыль (CHF)" />
-      </div>
-      <button id="updateProfitBtn" class="add-btn" style="align-self: flex-start;">📊</button>
-
-      <div class="progress-circle">
-        <svg width="120" height="120">
-          <circle class="progress-bg" />
-          <circle class="progress-fill" id="profitCircle" stroke-dasharray="314" stroke-dashoffset="314" />
-        </svg>
-        <div class="progress-text" id="profitPercent">0%</div>
-      </div>
-
-      <div id="profitDisplay" style="text-align: center; margin-top: 10px;"></div>
-    </div>
-  </div>
-
-  <div class="logo">✨</div>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    // ========== Утилиты ==========
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function getToday() {
-      const now = new Date();
-      return now.toISOString().split('T')[0];
-    }
-
-    // ========== Вкладки ==========
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
-
-        tab.classList.add('active');
-        const targetId = tab.dataset.tab + '-tab';
-        document.getElementById(targetId).classList.remove('hidden');
-      });
-    });
-
-    // ========== Задачи ==========
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    let currentFilter = 'all';
-
-    const taskInput = document.getElementById('taskInput');
-    const addTaskBtn = document.getElementById('addTaskBtn');
-    const tasksList = document.getElementById('tasksList');
-    const filterButtons = document.querySelectorAll('.filter-btn');
-
-    function renderTasks() {
-      const filteredTasks = tasks.filter(task => {
-        if (currentFilter === 'active') return !task.completed;
-        if (currentFilter === 'completed') return task.completed;
-        return true;
-      });
-
-      if (filteredTasks.length === 0) {
-        tasksList.innerHTML = '<div class="empty-state">Нет задач</div>';
-        return;
-      }
-
-      tasksList.innerHTML = '';
-      filteredTasks.forEach(task => {
-        const taskDiv = document.createElement('div');
-        taskDiv.className = 'task-item';
-        taskDiv.innerHTML = `
-          <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}">
-          <span class="task-text ${task.completed ? 'completed' : ''}">${escapeHtml(task.text)}</span>
-          <div class="task-color" style="background:${task.color}"></div>
-          <button class="delete-btn" data-id="${task.id}">🗑️</button>
-        `;
-        tasksList.appendChild(taskDiv);
-      });
-    }
-
-    function updateStats() {
-      const total = tasks.length;
-      const completed = tasks.filter(t => t.completed).length;
-      const active = total - completed;
-
-      document.getElementById('totalTasks').textContent = total;
-      document.getElementById('activeTasks').textContent = active;
-      document.getElementById('completedTasks').textContent = completed;
-    }
-
-    function updateDailyProgressAndStreak() {
-      const today = getToday();
-      const completedToday = tasks.filter(t => t.completed && t.createdAt === today).length;
-      const streak = calculateStreak();
-
-      // Можно расширить для отображения прогресса дня
-    }
-
-    function calculateStreak() {
-      const dates = [...new Set(tasks.filter(t => t.completed).map(t => t.createdAt))].sort();
-      let streak = 0;
-      const today = new Date();
-      let currentDate = new Date(today);
-
-      while (dates.includes(currentDate.toISOString().split('T')[0])) {
-        streak++;
-        currentDate.setDate(currentDate.getDate() - 1);
-      }
-      return streak;
-    }
-
-    // 🔥 КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: unshift вместо push
-    function addTask() {
-      const input = document.getElementById('taskInput');
-      const colorSelect = document.getElementById('taskColor');
-      const text = input.value.trim();
-      const color = colorSelect.value;
-      if (text) {
-        tasks.unshift({ // ← НОВАЯ ЗАДАЧА ДОБАВЛЯЕТСЯ В НАЧАЛО МАССИВА
-          id: Date.now(),
-          text: text,
-          completed: false,
-          color: color,
-          createdAt: getToday()
-        });
-        input.value = '';
-        saveData();
-        updateStats();
-        updateDailyProgressAndStreak();
-        renderTasks();
-        addXP(10);
-      }
-    }
-
-    addTaskBtn.addEventListener('click', addTask);
-    taskInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addTask();
-    });
-
-    tasksList.addEventListener('click', (e) => {
-      if (e.target.classList.contains('task-checkbox')) {
-        const id = parseInt(e.target.dataset.id);
-        const task = tasks.find(t => t.id === id);
-        if (task) {
-          task.completed = e.target.checked;
-          saveData();
-          updateStats();
-          updateDailyProgressAndStreak();
-          renderTasks();
-          if (task.completed) addXP(20);
+    <script>
+        let tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
         }
-      } else if (e.target.classList.contains('delete-btn')) {
-        const id = parseInt(e.target.dataset.id);
-        tasks = tasks.filter(t => t.id !== id);
-        saveData();
+
+        let tasks = JSON.parse(localStorage.getItem('ch_tasks')) || [];
+        let profitGoal = parseInt(localStorage.getItem('ch_profit_goal')) || 5000;
+        let profitCurrent = parseInt(localStorage.getItem('ch_profit_current')) || 0;
+        let notepadText = localStorage.getItem('ch_notepad') || '';
+        let xp = parseInt(localStorage.getItem('ch_xp')) || 0;
+        let currentFilter = 'all';
+
+        // Theme
+        const savedTheme = localStorage.getItem('ch_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        function saveData() {
+            localStorage.setItem('ch_tasks', JSON.stringify(tasks));
+            localStorage.setItem('ch_profit_goal', profitGoal);
+            localStorage.setItem('ch_profit_current', profitCurrent);
+            localStorage.setItem('ch_notepad', notepadText);
+            localStorage.setItem('ch_xp', xp);
+            localStorage.setItem('ch_theme', document.documentElement.getAttribute('data-theme'));
+        }
+
+        const LEVELS = [
+            { min: 0, max: 9, title: "Новичок", icon: `<svg viewBox="0 0 24 24"><path d="M12,2C8.5,2 6,4 6,7C6,8 6,9 6,10C6,11 7,12 8,13C9,14 10,15 10,16C10,17 9,18 8,19C7,20 7,21 7,21H17C17,21 17,20 16,19C15,18 14,17 14,16C14,15 15,14 16,13C17,12 18,11 18,10C18,9 18,8 18,7C18,4 15.5,2 12,2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+            { min: 10, max: 29, title: "Горный восходитель", icon: `<svg viewBox="0 0 24 24"><path d="M3,18L9,12L12,15L18,9L21,12V21H3V18Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,6L15,9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>` },
+            { min: 30, max: 59, title: "Мастер часов", icon: `<svg viewBox="0 0 24 24"><path d="M12,2V6L15,7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12,22V18L9,16.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>` },
+            { min: 60, max: Infinity, title: "Банкир VJUX", icon: `<svg viewBox="0 0 24 24"><path d="M3,21V10L12,3L21,10V21H3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15,10V21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12,13H14V17H10V13H12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>` }
+        ];
+
+        function getCurrentLevelInfo(xp) {
+            for (let level of LEVELS) {
+                if (xp >= level.min && xp <= level.max) {
+                    return {
+                        level,
+                        current: xp,
+                        next: level.max === Infinity ? null : level.max + 1,
+                        progress: level.max === Infinity ? 100 : Math.min(100, Math.round(((xp - level.min) / (level.max - level.min + 1)) * 100))
+                    };
+                }
+            }
+            return { level: LEVELS[0], current: 0, next: 10, progress: 0 };
+        }
+
+        function updateLevel() {
+            const info = getCurrentLevelInfo(xp);
+            const { level, current, next, progress } = info;
+
+            document.getElementById('levelName').textContent = level.title;
+            document.getElementById('levelIcon').innerHTML = level.icon;
+            document.getElementById('levelProgressFill').style.width = progress + '%';
+            
+            if (next === null) {
+                document.getElementById('levelXpText').textContent = `${current} XP • Макс. уровень`;
+            } else {
+                document.getElementById('levelXpText').textContent = `${current} / ${next} XP`;
+            }
+        }
+
+        function showLevelUpNotification(newLevelTitle) {
+            if (tg) {
+                tg.showAlert(`🎉 Повышение уровня!\nТеперь вы: ${newLevelTitle}`);
+            } else {
+                alert(`🎉 Повышение уровня!\nТеперь вы: ${newLevelTitle}`);
+            }
+        }
+
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const active = total - completed;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('activeCount').textContent = active;
+            document.getElementById('completedCount').textContent = completed;
+        }
+
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function updateDailyProgressAndStreak() {
+            const today = getToday();
+            const todayTasks = tasks.filter(t => t.createdAt === today);
+            const completedToday = todayTasks.filter(t => t.completed).length;
+            const totalToday = todayTasks.length || 1;
+
+            const percent = Math.round((completedToday / totalToday) * 100);
+            document.getElementById('dailyProgressFill').style.width = percent + '%';
+            document.getElementById('dailyProgressText').textContent = `${completedToday} / ${totalToday} задач`;
+
+            // Streak
+            const completedDates = [...new Set(tasks
+                .filter(t => t.completed)
+                .map(t => t.createdAt)
+            )].sort();
+
+            let streak = 0;
+            let currentDate = new Date();
+            while (true) {
+                const dateStr = currentDate.toISOString().split('T')[0];
+                if (completedDates.includes(dateStr)) {
+                    streak++;
+                    currentDate.setDate(currentDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+
+            document.getElementById('streakCounter').textContent = streak;
+        }
+
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            const filteredTasks = tasks.filter(task => {
+                if (currentFilter === 'active') return !task.completed;
+                if (currentFilter === 'completed') return task.completed;
+                return true;
+            });
+
+            if (filteredTasks.length === 0) {
+                const emptyMessages = {
+                    all: '📝 Нет задач',
+                    active: '✨ Все задачи выполнены!',
+                    completed: '📭 Нет выполненных задач'
+                };
+                tasksList.innerHTML = `<div class="empty-state">${emptyMessages[currentFilter]}</div>`;
+                return;
+            }
+
+            tasksList.innerHTML = filteredTasks.map(task => `
+                <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <div class="checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+                    <div class="task-content" style="display: flex; align-items: center;">
+                        <div class="tag-indicator" style="background: ${task.color || '#FF0000'};"></div>
+                        <div class="task-text">${task.text}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTask(${task.id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const colorSelect = document.getElementById('taskColor');
+            const text = input.value.trim();
+            const color = colorSelect.value;
+
+            if (text) {
+                tasks.push({
+                    id: Date.now(),
+                    text: text,
+                    completed: false,
+                    color: color,
+                    createdAt: getToday()
+                });
+                input.value = '';
+                saveData();
+                updateStats();
+                updateDailyProgressAndStreak();
+                renderTasks();
+            }
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                const wasCompleted = task.completed;
+                task.completed = !task.completed;
+
+                if (!wasCompleted && task.completed) {
+                    const oldXp = xp;
+                    xp += 1;
+                    const oldLevel = getCurrentLevelInfo(oldXp).level.title;
+                    const newLevel = getCurrentLevelInfo(xp).level.title;
+                    if (newLevel !== oldLevel) {
+                        showLevelUpNotification(newLevel);
+                    }
+                    updateLevel();
+                    launchConfetti();
+                } else if (wasCompleted && !task.completed) {
+                    xp = Math.max(0, xp - 1);
+                    updateLevel();
+                }
+
+                saveData();
+                updateStats();
+                updateDailyProgressAndStreak();
+                renderTasks();
+            }
+        }
+
+        function deleteTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task && task.completed) {
+                xp = Math.max(0, xp - 1);
+                updateLevel();
+            }
+            tasks = tasks.filter(t => t.id !== id);
+            saveData();
+            updateStats();
+            updateDailyProgressAndStreak();
+            renderTasks();
+        }
+
+        function updateProfit() {
+            const goal = parseInt(document.getElementById('profitGoal').value) || 0;
+            const current = parseInt(document.getElementById('profitCurrent').value) || 0;
+            
+            profitGoal = goal;
+            profitCurrent = current;
+            saveData();
+
+            const percent = goal > 0 ? Math.min(Math.round((current / goal) * 100), 100) : 0;
+
+            document.getElementById('profitProgressFill').style.width = percent + '%';
+            document.getElementById('profitProgressText').textContent = `${current} / ${goal} CHF`;
+            document.getElementById('profitProgressPercent').textContent = percent + '%';
+
+            const circle = document.getElementById('profitProgressRing');
+            const radius = 32;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percent / 100) * circumference;
+            circle.style.strokeDasharray = circumference;
+            circle.style.strokeDashoffset = offset;
+
+            const achievedEl = document.getElementById('profitGoalAchieved');
+            if (percent >= 100) {
+                achievedEl.style.display = 'block';
+            } else {
+                achievedEl.style.display = 'none';
+            }
+        }
+
+        const notepadTextarea = document.getElementById('notepadText');
+        const charCountEl = document.getElementById('charCount');
+
+        function updateCharCount() {
+            const count = notepadTextarea.value.length;
+            charCountEl.textContent = `${count} символов`;
+        }
+
+        notepadTextarea.addEventListener('input', () => {
+            notepadText = notepadTextarea.value;
+            updateCharCount();
+        });
+
+        document.getElementById('saveNoteBtn').addEventListener('click', () => {
+            notepadText = notepadTextarea.value;
+            saveData();
+            if (tg) {
+                tg.showAlert('Заметка сохранена!');
+            } else {
+                alert('Заметка сохранена!');
+            }
+        });
+
+        document.getElementById('addBtn').addEventListener('click', addTask);
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderTasks();
+            });
+        });
+
+        document.getElementById('profitGoal').addEventListener('input', updateProfit);
+        document.getElementById('profitCurrent').addEventListener('input', updateProfit);
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tabs-wrapper').forEach(t => t.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const target = tab.dataset.tab + '-tab';
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        // Theme toggle
+        document.querySelector('.theme-toggle').addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            saveData();
+        });
+
+        // ❄️ Snow effect
+        (function() {
+            const canvas = document.getElementById('snow-canvas');
+            const ctx = canvas.getContext('2d');
+            let snowflakes = [];
+            let animationFrame;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            class Snowflake {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * -canvas.height;
+                    this.radius = Math.random() * 2 + 1;
+                    this.speed = Math.random() * 1 + 0.2;
+                    this.opacity = Math.random() * 0.5 + 0.3;
+                    this.drift = (Math.random() - 0.5) * 0.5;
+                }
+
+                update() {
+                    this.y += this.speed;
+                    this.x += this.drift;
+                    if (this.y > canvas.height) {
+                        this.y = -10;
+                        this.x = Math.random() * canvas.width;
+                    }
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.x < 0) this.x = canvas.width;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            function initSnow() {
+                const count = Math.min(100, Math.floor(window.innerWidth / 8));
+                snowflakes = [];
+                for (let i = 0; i < count; i++) {
+                    snowflakes.push(new Snowflake());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                snowflakes.forEach(flake => {
+                    flake.update();
+                    flake.draw();
+                });
+                animationFrame = requestAnimationFrame(animate);
+            }
+
+            initSnow();
+            animate();
+
+            const observer = new MutationObserver(() => {
+                initSnow();
+            });
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        })();
+
+        // 🎉 Confetti
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const confettiCount = 150;
+            const gravity = 0.2;
+            const colors = ['#FF0000', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#FFFFFF'];
+
+            let confettis = [];
+            for (let i = 0; i < confettiCount; i++) {
+                confettis.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    angle: Math.random() * Math.PI * 2,
+                    speed: 3 + Math.random() * 5,
+                    size: 6 + Math.random() * 8,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+                confettis.forEach(c => {
+                    c.y += Math.sin(c.angle) * c.speed;
+                    c.x += Math.cos(c.angle) * c.speed;
+                    c.angle += 0.02;
+                    c.rotation += c.rotationSpeed;
+                    c.speed *= 0.99;
+                    c.y += gravity;
+                    if (c.y < canvas.height) alive = true;
+                    ctx.save();
+                    ctx.translate(c.x, c.y);
+                    ctx.rotate(c.rotation * Math.PI / 180);
+                    ctx.fillStyle = c.color;
+                    ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
+                    ctx.restore();
+                });
+                if (alive) requestAnimationFrame(animate);
+            }
+
+            animate();
+            setTimeout(() => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 3000);
+        }
+
+        // Init
+        document.getElementById('profitGoal').value = profitGoal;
+        document.getElementById('profitCurrent').value = profitCurrent;
+        notepadTextarea.value = notepadText;
+
         updateStats();
+        updateProfit();
+        updateCharCount();
+        updateLevel();
         updateDailyProgressAndStreak();
         renderTasks();
-      }
-    });
-
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        renderTasks();
-      });
-    });
-
-    // ========== Заметки ==========
-    const noteInput = document.getElementById('noteInput');
-    const charCount = document.getElementById('charCount');
-    const saveNoteBtn = document.getElementById('saveNoteBtn');
-
-    let note = localStorage.getItem('note') || '';
-    noteInput.value = note;
-    charCount.textContent = note.length;
-
-    noteInput.addEventListener('input', () => {
-      const value = noteInput.value;
-      if (value.length <= 1000) {
-        charCount.textContent = value.length;
-        note = value;
-        localStorage.setItem('note', note);
-      } else {
-        noteInput.value = note;
-      }
-    });
-
-    saveNoteBtn.addEventListener('click', () => {
-      note = noteInput.value.substring(0, 1000);
-      localStorage.setItem('note', note);
-      charCount.textContent = note.length;
-    });
-
-    // ========== Прибыль ==========
-    const targetInput = document.getElementById('targetInput');
-    const currentInput = document.getElementById('currentInput');
-    const updateProfitBtn = document.getElementById('updateProfitBtn');
-    const profitCircle = document.getElementById('profitCircle');
-    const profitPercent = document.getElementById('profitPercent');
-    const profitDisplay = document.getElementById('profitDisplay');
-
-    let profitData = JSON.parse(localStorage.getItem('profitData')) || { target: '', current: '' };
-
-    function renderProfit() {
-      const { target, current } = profitData;
-      if (!target || !current) {
-        profitDisplay.textContent = 'Установите цель и текущую прибыль';
-        profitCircle.style.strokeDashoffset = '314';
-        profitPercent.textContent = '0%';
-        return;
-      }
-
-      const percent = Math.min(100, (current / target) * 100);
-      const offset = 314 - (314 * percent) / 100;
-
-      profitCircle.style.strokeDashoffset = offset.toString();
-      profitPercent.textContent = Math.round(percent) + '%';
-      profitDisplay.innerHTML = `Цель: ${target} CHF<br>Текущая: ${current} CHF`;
-    }
-
-    updateProfitBtn.addEventListener('click', () => {
-      profitData = {
-        target: parseFloat(targetInput.value) || '',
-        current: parseFloat(currentInput.value) || ''
-      };
-      localStorage.setItem('profitData', JSON.stringify(profitData));
-      renderProfit();
-    });
-
-    targetInput.value = profitData.target;
-    currentInput.value = profitData.current;
-    renderProfit();
-
-    // ========== XP Система ==========
-    let xpData = JSON.parse(localStorage.getItem('xpData')) || { xp: 0, level: 1 };
-    const xpSpan = document.getElementById('xp');
-    const levelSpan = document.getElementById('level');
-    const nextLevelXpSpan = document.getElementById('nextLevelXp');
-
-    function getNextLevelXp(level) {
-      return 100 + (level - 1) * 50;
-    }
-
-    function updateXpDisplay() {
-      const next = getNextLevelXp(xpData.level);
-      xpSpan.textContent = xpData.xp;
-      levelSpan.textContent = xpData.level;
-      nextLevelXpSpan.textContent = next;
-
-      const xpFill = document.querySelector('.xp-fill');
-      if (xpFill) {
-        xpFill.style.width = `${Math.min(100, (xpData.xp / next) * 100)}%`;
-      }
-    }
-
-    function addXP(amount) {
-      xpData.xp += amount;
-      const next = getNextLevelXp(xpData.level);
-      if (xpData.xp >= next) {
-        xpData.xp -= next;
-        xpData.level++;
-        // 🎉 Конфетти можно добавить здесь
-      }
-      localStorage.setItem('xpData', JSON.stringify(xpData));
-      updateXpDisplay();
-    }
-
-    updateXpDisplay();
-
-    // ========== Сохранение ==========
-    function saveData() {
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-    // ========== Инициализация ==========
-    updateStats();
-    renderTasks();
-
-    // ========== Telegram WebApp ==========
-    if (window.Telegram && Telegram.WebApp) {
-      Telegram.WebApp.ready();
-      Telegram.WebApp.expand();
-      Telegram.WebApp.MainButton.setText("Готово");
-      Telegram.WebApp.MainButton.hide();
-    }
-
-    // ========== Снег (для атмосферы) ==========
-    function createSnow() {
-      const snowflakes = ['❄', '❅', '❆'];
-      setInterval(() => {
-        const snow = document.createElement('div');
-        snow.className = 'snowflake';
-        snow.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-        snow.style.left = Math.random() * 100 + 'vw';
-        snow.style.opacity = Math.random() * 0.5 + 0.3;
-        snow.style.fontSize = (Math.random() * 10 + 10) + 'px';
-        snow.style.animationDuration = (Math.random() * 5 + 5) + 's';
-        document.body.appendChild(snow);
-        setTimeout(() => snow.remove(), 10000);
-      }, 300);
-    }
-    createSnow();
-  </script>
+    </script>
 </body>
 </html>
