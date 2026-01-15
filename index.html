@@ -526,23 +526,28 @@
             position: fixed;
             bottom: 15px;
             right: 15px;
-            width: 20vw;
-            height: 20vh;
+            width: 150px;
+            height: 150px;
             z-index: 100;
             transition: all 0.3s ease;
             pointer-events: none;
+            background: transparent;
+            border-radius: 50%;
+            overflow: hidden;
         }
 
         .footer-logo img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             transition: transform 0.3s ease;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+            background: transparent;
+            mix-blend-mode: lighten;
         }
 
         .footer-logo:hover img {
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
     </style>
 </head>
@@ -658,7 +663,7 @@
     </div>
 
     <div class="footer-logo">
-        <img src="https://png.klev.club/uploads/posts/2024-05/png-klev-club-6mvx-p-vzhukh-kot-png-5.png" alt="Логотип">
+        <img src="https://foni.papik.pro/uploads/posts/2024-09/foni-papik-pro-fjzl-p-kartinki-kot-vzhukh-na-prozrachnom-fone-8.png" alt="Логотип">
     </div>
 
     <script>
